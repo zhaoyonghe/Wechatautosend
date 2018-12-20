@@ -19,21 +19,26 @@ import static com.example.asus.wechatautosend.AutoSendMsgService.CONTACTDONE;
 import static com.example.asus.wechatautosend.AutoSendMsgService.GROUPDONE;
 
 public class MainActivity extends AppCompatActivity {
+    public static MainActivity thisActivity;
     private EditText labelname,collectname;
     private TextView send;
+    private EditText gaptimeinput;
     private Switch contactswitch;
     private Switch groupswitch;
     private AccessibilityManager accessbilityManager;
     private Boolean needcontactsend = true;
     private Boolean needgroupsend = true;
+    public static int GAPTIME = 30;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        thisActivity = this;
         setContentView(R.layout.activity_main);
         send = (TextView) findViewById(R.id.send);
         labelname = (EditText)findViewById(R.id.labelname);
         collectname = (EditText)findViewById(R.id.collectname);
         contactswitch = (Switch)findViewById(R.id.contactswitch);
+        gaptimeinput = (EditText)findViewById(R.id.gaptimeinput);
         contactswitch.setChecked(true);
         contactswitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 accessbilityManager = (AccessibilityManager)getSystemService(ACCESSIBILITY_SERVICE);
                 String lname = labelname.getText().toString();
                 String cname = collectname.getText().toString();
+                GAPTIME = Integer.parseInt(gaptimeinput.getText().toString());
                 if((TextUtils.isEmpty(lname) && needcontactsend )|| TextUtils.isEmpty(cname)){
                     Toast.makeText(MainActivity.this, "内容不能为空", Toast.LENGTH_LONG).show();
                     return;
@@ -66,24 +72,13 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     return;
                 }
-                goWechat();
-                int sleeptime = 0;
-                /**
-                while(sleeptime<120){
-                    sleeptime++;
-                    Log.d("sleeping", "sleeping");
-                    try {
-                        Thread.currentThread().sleep(1000);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        return;
-                    }
-                }*/
-                goWechat();
+                Intent intent = new Intent(thisActivity, LongRunningService.class);
+
+                startService(intent);
             }
         });
     }
-    private void goWechat(){
+    public void goWechat(){
         CONTACTDONE = !needcontactsend;
         GROUPDONE = !needgroupsend;
         LABELNAME = labelname.getText().toString();
@@ -105,4 +100,5 @@ public class MainActivity extends AppCompatActivity {
         i.setClassName(WechatWrapper.WECAHT_PACKAGENAME, WechatWrapper.WechatClass.WECHAT_CLASS_LAUNCHUI);
         startActivity(i);
     }
+
 }

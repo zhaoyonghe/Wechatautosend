@@ -9,10 +9,10 @@ import java.util.List;
 
 import static com.example.asus.wechatautosend.WechatUtils.performClick;
 
-public class AutoSendMsgService extends AccessibilityService {
+public class AutoSendMsgService extends AccessibilityService{
     public static String LABELNAME, COLLECTNAME;
-    public static Boolean CONTACTDONE = false;
-    public static Boolean GROUPDONE = false;
+    public static Boolean CONTACTDONE = true;
+    public static Boolean GROUPDONE = true;
     public static Boolean SENT = false;
     private static int contactnum = -1, contactcuridx = -1;
     private static int groupnum = -1, groupcuridx = -1;
@@ -20,7 +20,7 @@ public class AutoSendMsgService extends AccessibilityService {
 
     private static List<String> groupnamelist = null;
     @Override
-    public void onAccessibilityEvent(AccessibilityEvent event) {
+    public void onAccessibilityEvent(AccessibilityEvent event){
         int eventtype = event.getEventType();
 
         if (eventtype == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED){
@@ -28,6 +28,9 @@ public class AutoSendMsgService extends AccessibilityService {
             Log.v("actname", curactivity);
             if (CONTACTDONE && GROUPDONE) {//都发完了，挂机
                 Log.d("fuckyou", "fuckyou");
+                if (curactivity.equals(WechatWrapper.WechatClass.WECHAT_CLASS_LAUNCHUI)){
+                    performGlobalAction(GLOBAL_ACTION_HOME);
+                }
             }else if (!CONTACTDONE){//没发完，先发联系人
                 Log.d("groupgroup", String.valueOf(GROUPDONE));
                 //首页和联系人页

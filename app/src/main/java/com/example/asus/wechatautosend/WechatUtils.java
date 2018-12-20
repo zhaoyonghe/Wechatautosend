@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.accessibility.AccessibilityNodeInfo;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -155,12 +156,25 @@ public class WechatUtils {
         AccessibilityNodeInfo accessibilityNodeInfo = accessibilityService.getRootInActiveWindow();
         AccessibilityNodeInfo list = accessibilityNodeInfo.findAccessibilityNodeInfosByViewId(WechatWrapper.WechatId.WECHAT_CONTACT_LIST_ID).get(0);
         //TODO 需要异常处理
+        int sizelasttime = 0;
+        int sizesametimes = 0;
         while (res.size() < num){
             List<AccessibilityNodeInfo> namelist = accessibilityNodeInfo.findAccessibilityNodeInfosByViewId(WechatWrapper.WechatId.WECHAT_CONTACT_NAME_ID);
             for (AccessibilityNodeInfo nodeInfo:namelist){
                 res.add(nodeInfo.getText().toString());
             }
             list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+            if(sizelasttime == res.size()){
+                if (sizesametimes > 25){
+                    Toast.makeText(MainActivity.thisActivity, "联系人可能有重名情况，这会导致并不能发送给所有的联系人，请及时修改备注", Toast.LENGTH_LONG).show();
+                    break;
+                } else {
+                    sizesametimes++;
+                    continue;
+                }
+            }
+            sizelasttime = res.size();
+            sizesametimes = 0;
         }
         List<String> r = new ArrayList<>();
         r.addAll(res);
@@ -186,7 +200,8 @@ public class WechatUtils {
             }
             list.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
             if(sizelasttime == res.size()){
-                if (sizesametimes > 5){
+                if (sizesametimes > 25){
+                    Toast.makeText(MainActivity.thisActivity, "群聊可能有重名情况，这会导致并不能发送给所有的群聊，请及时修改群聊名", Toast.LENGTH_LONG).show();
                     break;
                 } else {
                     sizesametimes++;

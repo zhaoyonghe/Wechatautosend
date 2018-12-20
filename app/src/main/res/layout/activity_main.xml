@@ -46,6 +46,26 @@
             android:layout_toRightOf="@id/collect"
             android:hint="请输入收藏标签名称"/>
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="9dp"
+        android:paddingRight="9dp">
+    <TextView
+        android:id="@+id/gaptime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="间隔时间"/>
+    <EditText
+        android:id="@+id/gaptimeinput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/gaptime"
+        android:hint="请输入合理的分钟数"/>
 
     </RelativeLayout>
 
